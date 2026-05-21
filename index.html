@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotorTracker Ultimate Firebase</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MotorTracker Ultimate Firebase</title>
 
- <!-- Ikon Khas Skrin iPhone Menggunakan Gambar Google Drive Terbaharu Kau -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Ikon Khas Skrin iPhone Menggunakan Gambar Google Drive Terbaharu Kau -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://lh3.googleusercontent.com/u/0/d/1tJecn2XABTliH8_Xehqy8A_9gJm7GvID">
 
 <!-- Ikon Untuk Android / Browser Biasa -->
@@ -16,504 +21,703 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+*{
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+margin:0;
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+padding:0;
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #0b1120;
-      color: white;
-      padding: 20px;
-    }
+box-sizing:border-box;
 
-    .container {
-      max-width: 1400px;
-      margin: auto;
-    }
+}
 
-    h1 {
-      font-size: 38px;
-      margin-bottom: 10px;
-    }
+body{
 
-    .subtitle {
-      color: #94a3b8;
-      margin-bottom: 25px;
-    }
+font-family:'Inter',sans-serif;
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
+background:#0b1120;
 
-    .card {
-      background: #111827;
-      padding: 22px;
-      border-radius: 22px;
-      border: 1px solid #1f2937;
-    }
+color:white;
 
-    input,
-    select,
-    textarea,
-    button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 14px;
-      font-family: 'Inter', sans-serif;
-    }
+padding:20px;
 
-    input,
-    select,
-    textarea {
-      background: #1e293b;
-      color: white;
-    }
+}
 
-    button {
-      background: #2563eb;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
+.container{
 
-    .motor {
-      background: #0f172a;
-      padding: 18px;
-      border-radius: 18px;
-      margin-top: 18px;
-      border: 1px solid #1e293b;
-    }
+max-width:1400px;
 
-    .status {
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 10px;
-    }
+margin:auto;
 
-    .good {
-      background: #14532d;
-    }
+}
 
-    .warn {
-      background: #854d0e;
-    }
+h1{
 
-    .danger {
-      background: #7f1d1d;
-    }
+font-size:38px;
 
-    .progress {
-      width: 100%;
-      height: 10px;
-      background: #1e293b;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 10px;
-    }
+margin-bottom:10px;
 
-    .progress div {
-      height: 100%;
-      background: #3b82f6;
-    }
+}
 
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
+.subtitle{
 
-    .table th,
-    .table td {
-      padding: 12px;
-      border-bottom: 1px solid #1e293b;
-      text-align: left;
-      font-size: 14px;
-    }
+color:#94a3b8;
 
-    .preview {
-      width: 100%;
-      margin-top: 15px;
-      border-radius: 14px;
-    }
+margin-bottom:25px;
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
+}
 
-    .stat {
-      background: #111827;
-      padding: 20px;
-      border-radius: 18px;
-      border: 1px solid #1f2937;
-    }
+.grid{
 
-    .stat h2 {
-      font-size: 30px;
-      margin-top: 10px;
-    }
-  </style>
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+gap:20px;
+
+}
+
+.card{
+
+background:#111827;
+
+padding:22px;
+
+border-radius:22px;
+
+border:1px solid #1f2937;
+
+}
+
+input,select,textarea,button{
+
+width:100%;
+
+padding:14px;
+
+margin-top:10px;
+
+border:none;
+
+border-radius:14px;
+
+font-family:'Inter',sans-serif;
+
+}
+
+input,select,textarea{
+
+background:#1e293b;
+
+color:white;
+
+}
+
+button{
+
+background:#2563eb;
+
+color:white;
+
+font-weight:600;
+
+cursor:pointer;
+
+}
+
+.motor{
+
+background:#0f172a;
+
+padding:18px;
+
+border-radius:18px;
+
+margin-top:18px;
+
+border:1px solid #1e293b;
+
+}
+
+.status{
+
+padding:12px;
+
+border-radius:12px;
+
+margin-top:10px;
+
+}
+
+.good{
+
+background:#14532d;
+
+}
+
+.warn{
+
+background:#854d0e;
+
+}
+
+.danger{
+
+background:#7f1d1d;
+
+}
+
+.progress{
+
+width:100%;
+
+height:10px;
+
+background:#1e293b;
+
+border-radius:999px;
+
+overflow:hidden;
+
+margin-top:10px;
+
+}
+
+.progress div{
+
+height:100%;
+
+background:#3b82f6;
+
+}
+
+.table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:15px;
+
+}
+
+.table th,.table td{
+
+padding:12px;
+
+border-bottom:1px solid #1e293b;
+
+text-align:left;
+
+font-size:14px;
+
+}
+
+.preview{
+
+width:100%;
+
+margin-top:15px;
+
+border-radius:14px;
+
+}
+
+.stats{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+
+gap:15px;
+
+margin-bottom:20px;
+
+}
+
+.stat{
+
+background:#111827;
+
+padding:20px;
+
+border-radius:18px;
+
+border:1px solid #1f2937;
+
+}
+
+.stat h2{
+
+font-size:30px;
+
+margin-top:10px;
+
+}
+
+/* Gaya Butang Padam */
+.btn-delete {
+background: #7f1d1d;
+color: white;
+padding: 6px 12px;
+border-radius: 8px;
+font-size: 12px;
+cursor: pointer;
+width: auto;
+margin-top: 0;
+display: inline-block;
+}
+
+.btn-delete:hover {
+background: #b91c1c;
+}
+
+/* Gaya Butang Padam Motor */
+.btn-delete-motor {
+background: #374151;
+color: #f3f4f6;
+margin-top: 10px;
+font-size: 13px;
+padding: 10px;
+}
+
+.btn-delete-motor:hover {
+background: #7f1d1d;
+}
+
+</style>
 
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h1>🏍️ MotorTracker Ultimate Firebase</h1>
+<h1>🏍️ MotorTracker Ultimate Firebase</h1>
 
-    <div class="subtitle">
+<div class="subtitle">
 
-      Cloud Sync + Excel + PDF + Fuel Tracker + Receipt Upload
+Cloud Sync + Excel + PDF + Fuel Tracker + Receipt Upload
 
-    </div>
+</div>
 
-    <div class="stats">
+<div class="stats">
 
-      <div class="stat">
+<div class="stat">
 
-        Total Motors
+Total Motors
 
-        <h2 id="totalMotors">0</h2>
+<h2 id="totalMotors">0</h2>
 
-      </div>
+</div>
 
-      <div class="stat">
+<div class="stat">
 
-        Total Services
+Total Services
 
-        <h2 id="totalServices">0</h2>
+<h2 id="totalServices">0</h2>
 
-      </div>
+</div>
 
-      <div class="stat">
+<div class="stat">
 
-        Fuel Records
+Fuel Records
 
-        <h2 id="totalFuel">0</h2>
+<h2 id="totalFuel">0</h2>
 
-      </div>
+</div>
 
-      <div class="stat">
+<div class="stat">
 
-        Total Cost
+Total Cost
 
-        <h2 id="totalCost">RM0</h2>
+<h2 id="totalCost">RM0</h2>
 
-      </div>
+</div>
 
-    </div>
+</div>
 
-    <div class="grid">
+<div class="grid">
 
-      <div class="card">
+<div class="card">
 
-        <h2>Add Motor</h2>
+<h2>Add Motor</h2>
 
-        <input type="text" id="motorName" placeholder="Motor Name">
+<input type="text" id="motorName" placeholder="Motor Name">
 
-        <input type="text" id="plateNumber" placeholder="Plate Number">
+<input type="text" id="plateNumber" placeholder="Plate Number">
 
-        <input type="number" id="currentMileage" placeholder="Current Mileage">
+<input type="number" id="currentMileage" placeholder="Current Mileage">
 
-        <button onclick="addMotor()">
+<button onclick="addMotor()">
 
-          Add Motor
+Add Motor
 
-        </button>
+</button>
 
-      </div>
+</div>
 
-      <div class="card">
+<div class="card">
 
-        <h2>Add Service</h2>
+<h2>Add Service</h2>
 
-        <select id="serviceMotor"></select>
+<select id="serviceMotor"></select>
 
-        <select id="serviceType">
+<select id="serviceType">
 
-		<option>Minyak Hitam</option>
-  		<option>Oil Filter</option>
-  		<option>Spark Plug</option>
-  		<option>Air Filter</option>
-  		<option>Coolant</option>
-  		<option>Brake Pad Depan</option>
-  		<option>Brake Shoe Belakang</option>
-  		<option>Chain & Sprocket</option>
-  		<option>Clutch Plate</option>
-  		<option>Servis Karburator</option>
-  		<option>Minyak Fork Depan</option>
-		<option>Top Set Service</option>
-		<option>Full Overhaul</option>
+<option>Minyak Hitam</option>
 
-        </select>
+<option>Oil Filter</option>
 
-        <input type="number" id="serviceMileage" placeholder="Mileage">
+<option>Spark Plug</option>
 
-        <input type="date" id="serviceDate">
+<option>Air Filter</option>
 
-        <input type="number" id="serviceCost" placeholder="Cost RM">
+<option>Coolant</option>
 
-        <textarea id="serviceNotes" placeholder="Notes"></textarea>
+<option>Brake Pad Depan</option>
 
-        <button onclick="addService()">
+<option>Brake Shoe Belakang</option>
 
-          Save Service
+<option>Chain & Sprocket</option>
 
-        </button>
+<option>Clutch Plate</option>
 
-      </div>
+<option>Servis Karburator</option>
 
-      <div class="card">
+<option>Minyak Fork Depan</option>
 
-        <h2>Fuel Tracker</h2>
+<option>Top Set Service</option>
 
-        <input type="date" id="fuelDate">
+<option>Full Overhaul</option>
 
-        <input type="number" id="fuelAmount" placeholder="Fuel Amount RM">
+</select>
 
-        <input type="number" id="fuelMileage" placeholder="Mileage">
+<input type="number" id="serviceMileage" placeholder="Mileage">
 
-        <button onclick="saveFuel()">
+<input type="date" id="serviceDate">
 
-          Save Fuel
+<input type="number" id="serviceCost" placeholder="Cost RM">
 
-        </button>
+<textarea id="serviceNotes" placeholder="Notes"></textarea>
 
-        <div id="fuelStats" style="margin-top:15px;"></div>
+<button onclick="addService()">
 
-      </div>
+Save Service
 
-    </div>
+</button>
 
-    <div class="card" style="margin-top:20px;">
+</div>
 
-      <h2>Actions</h2>
+<div class="card">
 
-      <button onclick="exportExcel()">
+<h2>Fuel Tracker</h2>
 
-        Export Excel
+<input type="date" id="fuelDate">
 
-      </button>
+<input type="number" id="fuelAmount" placeholder="Fuel Amount RM">
 
-      <button onclick="exportPDF()">
+<input type="number" id="fuelMileage" placeholder="Mileage">
 
-        Generate PDF
+<button onclick="saveFuel()">
 
-      </button>
+Save Fuel
 
-      <button onclick="requestNotification()">
+</button>
 
-        Enable Notifications
+<div id="fuelStats" style="margin-top:15px;"></div>
 
-      </button>
+</div>
 
-    </div>
+</div>
 
-    <div class="card" style="margin-top:20px;">
+<div class="card" style="margin-top:20px;">
 
-      <h2>Motor Dashboard</h2>
+<h2>Actions</h2>
 
-      <div id="motorsContainer"></div>
+<button onclick="exportExcel()">
 
-    </div>
+Export Excel
 
-    <div class="card" style="margin-top:20px;">
+</button>
 
-      <h2>Service History</h2>
+<button onclick="exportPDF()">
 
-      <table class="table">
+Generate PDF
 
-        <thead>
+</button>
 
-          <tr>
+<button onclick="requestNotification()">
 
-            <th>Motor</th>
+Enable Notifications
 
-            <th>Service</th>
+</button>
 
-            <th>Mileage</th>
+</div>
 
-            <th>Cost</th>
+<div class="card" style="margin-top:20px;">
 
-            <th>Date</th>
+<h2>Motor Dashboard</h2>
 
-          </tr>
+<div id="motorsContainer"></div>
 
-        </thead>
+</div>
 
-        <tbody id="historyTable"></tbody>
+<div class="card" style="margin-top:20px;">
 
-      </table>
+<h2>Service History</h2>
 
-    </div>
+<table class="table">
 
-    <div class="card" style="margin-top:20px;">
+<thead>
 
-      <h2>Receipt Upload</h2>
+<tr>
 
-      <input type="file" id="receiptImage">
+<th>Motor</th>
 
-      <img id="preview" class="preview">
+<th>Service</th>
 
-      <p id="receiptStatus" style="margin-top:15px;">
+<th>Mileage</th>
 
-        No receipt uploaded
+<th>Cost</th>
 
-      </p>
+<th>Date</th>
 
-    </div>
+<th>Action</th>
 
-  </div>
+</tr>
 
-  <script type="module">
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-    import {
-      getAnalytics
-    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-    // DIUBAH: Menggunakan Realtime Database SDK sepadan dengan databaseURL anda
-    import {
-      getDatabase,
-      ref,
-      push,
-      set,
-      get,
-      update
-    } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
-    const firebaseConfig = {
-      apiKey: "AIzaSyAx7-SFlW6GU-IZBKSSB2t8JsbCv964L5U",
-      authDomain: "motortracker-a5aba.firebaseapp.com",
-      databaseURL: "https://motortracker-a5aba-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "motortracker-a5aba",
-      storageBucket: "motortracker-a5aba.firebasestorage.app",
-      messagingSenderId: "1018043984212",
-      appId: "1:1018043984212:web:17421cca816836ac9640c1",
-      measurementId: "G-B89Y18V9L7"
-    };
-    const app = initializeApp(firebaseConfig);
-    getAnalytics(app);
-    // DIUBAH: Initialize Realtime Database
-    const db = getDatabase(app);
-    let motors = [];
-    let services = [];
-    let fuels = [];
-    const intervals = {
-      "Minyak Hitam": 2000,
-      "Oil Filter": 4000,
-      "Spark Plug": 8000,
-      "Air Filter": 10000,
-      "Coolant": 20000,
-      "Brake Pad Depan": 12000,
-      "Brake Shoe Belakang": 20000,
-      "Chain & Sprocket": 15000,
-      "Clutch Plate": 35000,
-      "Servis Karburator": 15000,
-      "Minyak Fork Depan": 20000,
-      "Top Set Service": 45000,
-      "Full Overhaul": 90000
-    };
-    async function loadData() {
-      motors = [];
-      services = [];
-      fuels = [];
-      // DIUBAH: Ambil data dari Realtime Database node 'motors'
-      const motorSnap = await get(ref(db, "motors"));
-      if (motorSnap.exists()) {
-        motorSnap.forEach(docSnap => {
-          motors.push({
-            id: docSnap.key,
-            ...docSnap.val()
-          });
-        });
-      }
-      // DIUBAH: Ambil data dari Realtime Database node 'services'
-      const serviceSnap = await get(ref(db, "services"));
-      if (serviceSnap.exists()) {
-        serviceSnap.forEach(docSnap => {
-          services.push({
-            id: docSnap.key,
-            ...docSnap.val()
-          });
-        });
-      }
-      // DIUBAH: Ambil data dari Realtime Database node 'fuels'
-      const fuelSnap = await get(ref(db, "fuels"));
-      if (fuelSnap.exists()) {
-        fuelSnap.forEach(docSnap => {
-          fuels.push({
-            id: docSnap.key,
-            ...docSnap.val()
-          });
-        });
-      }
-      render();
-    }
-    window.addMotor = async function() {
-      // DIUBAH: Tolak data ke Realtime Database node 'motors'
-      const newRef = push(ref(db, "motors"));
-      await set(newRef, {
-        name: document.getElementById('motorName').value,
-        plate: document.getElementById('plateNumber').value,
-        mileage: Number(document.getElementById('currentMileage').value)
-      });
-      loadData();
-    }
-    window.addService = async function() {
-      // DIUBAH: Tolak data ke Realtime Database node 'services'
-      const newRef = push(ref(db, "services"));
-      await set(newRef, {
-        motorId: document.getElementById('serviceMotor').value,
-        type: document.getElementById('serviceType').value,
-        mileage: Number(document.getElementById('serviceMileage').value),
-        date: document.getElementById('serviceDate').value,
-        cost: Number(document.getElementById('serviceCost').value),
-        notes: document.getElementById('serviceNotes').value
-      });
-      loadData();
-    }
-    window.saveFuel = async function() {
-      // DIUBAH: Tolak data ke Realtime Database node 'fuels'
-      const newRef = push(ref(db, "fuels"));
-      await set(newRef, {
-        date: document.getElementById('fuelDate').value,
-        amount: Number(document.getElementById('fuelAmount').value),
-        mileage: Number(document.getElementById('fuelMileage').value)
-      });
-      loadData();
-    }
-
-    function render() {
-      const container = document.getElementById('motorsContainer');
-      const history = document.getElementById('historyTable');
-      const serviceMotor = document.getElementById('serviceMotor');
-      container.innerHTML = "";
-      history.innerHTML = "";
-      serviceMotor.innerHTML = "";
-      document.getElementById('totalMotors').innerText = motors.length;
-      document.getElementById('totalServices').innerText = services.length;
-      document.getElementById('totalFuel').innerText = fuels.length;
-      const total = services.reduce((sum, s) => sum + (s.cost || 0), 0);
-      document.getElementById('totalCost').innerText = "RM" + total;
-      motors.forEach(motor => {
-        serviceMotor.innerHTML += `
+</thead>
+
+<tbody id="historyTable"></tbody>
+
+</table>
+
+</div>
+
+<div class="card" style="margin-top:20px;">
+
+<h2>Receipt Upload</h2>
+
+<input type="file" id="receiptImage">
+
+<img id="preview" class="preview">
+
+<p id="receiptStatus" style="margin-top:15px;">
+
+No receipt uploaded
+
+</p>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+
+// Menggunakan Realtime Database SDK sepadan dengan databaseURL anda
+import { getDatabase, ref, push, set, get, update, remove } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAx7-SFlW6GU-IZBKSSB2t8JsbCv964L5U",
+  authDomain: "motortracker-a5aba.firebaseapp.com",
+  databaseURL: "https://motortracker-a5aba-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "motortracker-a5aba",
+  storageBucket: "motortracker-a5aba.firebasestorage.app",
+  messagingSenderId: "1018043984212",
+  appId: "1:1018043984212:web:17421cca816836ac9640c1",
+  measurementId: "G-B89Y18V9L7"
+};
+
+const app = initializeApp(firebaseConfig);
+
+getAnalytics(app);
+
+// Initialize Realtime Database
+const db = getDatabase(app);
+
+let motors = [];
+
+let services = [];
+
+let fuels = [];
+
+const intervals = {
+
+  "Minyak Hitam": 2500,
+
+  "Oil Filter": 5000,
+
+  "Spark Plug": 8000,
+
+  "Air Filter": 10000,
+
+  "Coolant": 20000,
+
+  "Brake Pad Depan": 12000,
+
+  "Brake Shoe Belakang": 20000,
+
+  "Chain & Sprocket": 15000,
+
+  "Clutch Plate": 35000,
+
+  "Servis Karburator": 15000,
+
+  "Minyak Fork Depan": 20000,
+
+  "Top Set Service": 45000,
+
+  "Full Overhaul": 90000
+
+};
+
+async function loadData(){
+
+motors = [];
+
+services = [];
+
+fuels = [];
+
+// Ambil data dari Realtime Database node 'motors'
+const motorSnap = await get(ref(db, "motors"));
+
+if(motorSnap.exists()){
+  motorSnap.forEach(docSnap=>{
+    motors.push({
+      id:docSnap.key,
+      ...docSnap.val()
+    });
+  });
+}
+
+// Ambil data dari Realtime Database node 'services'
+const serviceSnap = await get(ref(db, "services"));
+
+if(serviceSnap.exists()){
+  serviceSnap.forEach(docSnap=>{
+    services.push({
+      id:docSnap.key,
+      ...docSnap.val()
+    });
+  });
+}
+
+// Ambil data dari Realtime Database node 'fuels'
+const fuelSnap = await get(ref(db, "fuels"));
+
+if(fuelSnap.exists()){
+  fuelSnap.forEach(docSnap=>{
+    fuels.push({
+      id:docSnap.key,
+      ...docSnap.val()
+    });
+  });
+}
+
+render();
+
+}
+
+window.addMotor = async function(){
+
+// Tolak data ke Realtime Database node 'motors'
+const newRef = push(ref(db, "motors"));
+await set(newRef, {
+
+name:document.getElementById('motorName').value,
+
+plate:document.getElementById('plateNumber').value,
+
+mileage:Number(document.getElementById('currentMileage').value)
+
+});
+
+// Kosongkan form input selepas berjaya tambah
+document.getElementById('motorName').value = "";
+document.getElementById('plateNumber').value = "";
+document.getElementById('currentMileage').value = "";
+
+loadData();
+
+}
+
+window.addService = async function(){
+
+// Tolak data ke Realtime Database node 'services'
+const newRef = push(ref(db, "services"));
+await set(newRef, {
+
+motorId:document.getElementById('serviceMotor').value,
+
+type:document.getElementById('serviceType').value,
+
+mileage:Number(document.getElementById('serviceMileage').value),
+
+date:document.getElementById('serviceDate').value,
+
+cost:Number(document.getElementById('serviceCost').value),
+
+notes:document.getElementById('serviceNotes').value
+
+});
+
+loadData();
+
+}
+
+window.saveFuel = async function(){
+
+// Tolak data ke Realtime Database node 'fuels'
+const newRef = push(ref(db, "fuels"));
+await set(newRef, {
+
+date:document.getElementById('fuelDate').value,
+
+amount:Number(document.getElementById('fuelAmount').value),
+
+mileage:Number(document.getElementById('fuelMileage').value)
+
+});
+
+loadData();
+
+}
+
+function render(){
+
+const container = document.getElementById('motorsContainer');
+
+const history = document.getElementById('historyTable');
+
+const serviceMotor = document.getElementById('serviceMotor');
+
+container.innerHTML = "";
+
+history.innerHTML = "";
+
+serviceMotor.innerHTML = "";
+
+document.getElementById('totalMotors').innerText = motors.length;
+
+document.getElementById('totalServices').innerText = services.length;
+
+document.getElementById('totalFuel').innerText = fuels.length;
+
+const total = services.reduce((sum,s)=>sum + (s.cost || 0),0);
+
+document.getElementById('totalCost').innerText = "RM" + total;
+
+motors.forEach(motor=>{
+
+serviceMotor.innerHTML += `
 
 <option value="${motor.id}">
 
@@ -522,10 +726,14 @@ ${motor.name}
 </option>
 
 `;
-        const motorServices = services.filter(
-          s => s.motorId === motor.id
-        );
-        let html = `
+
+const motorServices = services.filter(
+
+s=>s.motorId===motor.id
+
+);
+
+let html = `
 
 <div class="motor">
 
@@ -542,31 +750,58 @@ ${motor.mileage} KM
 </p>
 
 `;
-        Object.keys(intervals).forEach(type => {
-          const latest = motorServices
-            .filter(s => s.type === type)
-            .sort((a, b) => b.mileage - a.mileage)[0];
-          if (latest) {
-            const next = latest.mileage + intervals[type];
-            const left = next - motor.mileage;
-            let cls = "good";
-            let label = "GOOD";
-            if (left <= 0) {
-              cls = "danger";
-              label = "OVERDUE";
-            } else if (left <= 500) {
-              cls = "warn";
-              label = "DUE SOON";
-            }
-            const progress = Math.min(
-              100,
-              Math.max(
-                0,
-                ((motor.mileage - latest.mileage) /
-                  intervals[type]) * 100
-              )
-            );
-            html += `
+
+Object.keys(intervals).forEach(type=>{
+
+const latest = motorServices
+
+.filter(s=>s.type===type)
+
+.sort((a,b)=>b.mileage-a.mileage)[0];
+
+if(latest){
+
+const next = latest.mileage + intervals[type];
+
+const left = next - motor.mileage;
+
+let cls = "good";
+
+let label = "GOOD";
+
+if(left <= 0){
+
+cls = "danger";
+
+label = "OVERDUE";
+
+}
+
+else if(left <= 500){
+
+cls = "warn";
+
+label = "DUE SOON";
+
+}
+
+const progress = Math.min(
+
+100,
+
+Math.max(
+
+0,
+
+((motor.mileage-latest.mileage)
+
+/intervals[type])*100
+
+)
+
+);
+
+html += `
 
 <div class="status ${cls}">
 
@@ -591,9 +826,12 @@ ${left} KM
 </div>
 
 `;
-          }
-        });
-        html += `
+
+}
+
+});
+
+html += `
 
 <input type="number"
 
@@ -607,16 +845,29 @@ Update Mileage
 
 </button>
 
+<button class="btn-delete-motor" onclick="deleteMotor('${motor.id}', '${motor.name}')">
+
+🗑️ Delete Motor
+
+</button>
+
 </div>
 
 `;
-        container.innerHTML += html;
-      });
-      services.slice().reverse().forEach(s => {
-        const motor = motors.find(
-          m => m.id === s.motorId
-        );
-        history.innerHTML += `
+
+container.innerHTML += html;
+
+});
+
+services.slice().reverse().forEach(s=>{
+
+const motor = motors.find(
+
+m=>m.id===s.motorId
+
+);
+
+history.innerHTML += `
 
 <tr>
 
@@ -630,36 +881,90 @@ Update Mileage
 
 <td>${s.date}</td>
 
+<td>
+  <button class="btn-delete" onclick="deleteService('${s.id}')">🗑️ Padam</button>
+</td>
+
 </tr>
 
 `;
-      });
-      renderFuel();
-    }
-    window.updateMileage = async function(id) {
-      const value = Number(
-        document.getElementById('update-' + id).value
-      );
-      // DIUBAH: Kemaskini mengikut path Realtime Database
-      await update(ref(db, `motors/${id}`), {
-        mileage: value
-      });
-      loadData();
-    }
 
-    function renderFuel() {
-      const stats = document.getElementById('fuelStats');
-      if (fuels.length < 2) {
-        stats.innerHTML = "Need more fuel records";
-        return;
+});
+
+renderFuel();
+
+}
+
+window.updateMileage = async function(id){
+
+const value = Number(
+
+document.getElementById('update-'+id).value
+
+);
+
+// Kemaskini mengikut path Realtime Database
+await update(ref(db, `motors/${id}`), {
+
+mileage:value
+
+});
+
+loadData();
+
+}
+
+window.deleteService = async function(id) {
+  if(confirm("Betul ke kau nak padam rekod servis ini? Data tak boleh dikembalikan semula.")) {
+    await remove(ref(db, `services/${id}`));
+    loadData();
+  }
+}
+
+// DITAMBAH: Fungsi global untuk memadam motor dan membersihkan rekod servisnya sekali
+window.deleteMotor = async function(id, name) {
+  if(confirm(`Serius lah kau nak buang motor "${name}" ni? Semua sejarah servis untuk motor ni pun akan dipadam sekali.`)) {
+    
+    // 1. Padam entri motor utama
+    await remove(ref(db, `motors/${id}`));
+    
+    // 2. Cari dan padam semua sejarah servis yang miliki motorId ini
+    services.forEach(async (s) => {
+      if(s.motorId === id) {
+        await remove(ref(db, `services/${s.id}`));
       }
-      const latest = fuels[fuels.length - 1];
-      const previous = fuels[fuels.length - 2];
-      const distance = latest.mileage - previous.mileage;
-      const costPerKm = (
-        latest.amount / distance
-      ).toFixed(2);
-      stats.innerHTML = `
+    });
+    
+    // 3. Ambil data baharu untuk refresh skrin
+    loadData();
+  }
+}
+
+function renderFuel(){
+
+const stats = document.getElementById('fuelStats');
+
+if(fuels.length < 2){
+
+stats.innerHTML = "Need more fuel records";
+
+return;
+
+}
+
+const latest = fuels[fuels.length-1];
+
+const previous = fuels[fuels.length-2];
+
+const distance = latest.mileage - previous.mileage;
+
+const costPerKm = (
+
+latest.amount / distance
+
+).toFixed(2);
+
+stats.innerHTML = `
 
 Distance:
 
@@ -672,67 +977,124 @@ Fuel Cost:
 RM ${costPerKm}/KM
 
 `;
-    }
-    window.exportExcel = function() {
-      const data = services.map(s => {
-        const motor = motors.find(
-          m => m.id === s.motorId
-        );
-        return {
-          Motor: motor ? motor.name : '-',
-          Service: s.type,
-          Mileage: s.mileage,
-          Cost: s.cost,
-          Date: s.date,
-          Notes: s.notes
-        };
-      });
-      const ws = XLSX.utils.json_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Services");
-      XLSX.writeFile(wb, "motor-services.xlsx");
-    }
-    window.exportPDF = async function() {
-      const {
-        jsPDF
-      } = window.jspdf;
-      const pdf = new jsPDF();
-      pdf.text("Motor Service Report", 20, 20);
-      let y = 40;
-      services.forEach(s => {
-        const motor = motors.find(
-          m => m.id === s.motorId
-        );
-        pdf.text(
-          `${motor ? motor.name : '-'} | ${s.type} | RM${s.cost}`,
-          20,
-          y
-        );
-        y += 10;
-      });
-      pdf.save("motor-report.pdf");
-    }
-    window.requestNotification = function() {
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-      }
-    }
-    document.getElementById('receiptImage')
-      .addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(event) {
-            document.getElementById('preview').src =
-              event.target.result;
-            document.getElementById('receiptStatus')
-              .innerHTML = "Receipt uploaded successfully";
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    loadData();
-  </script>
+
+}
+
+window.exportExcel = function(){
+
+const data = services.map(s=>{
+
+const motor = motors.find(
+
+m=>m.id===s.motorId
+
+);
+
+return {
+
+Motor:motor ? motor.name : '-',
+
+Service:s.type,
+
+Mileage:s.mileage,
+
+Cost:s.cost,
+
+Date:s.date,
+
+Notes:s.notes
+
+};
+
+});
+
+const ws = XLSX.utils.json_to_sheet(data);
+
+const wb = XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(wb,ws,"Services");
+
+XLSX.writeFile(wb,"motor-services.xlsx");
+
+}
+
+window.exportPDF = async function(){
+
+const { jsPDF } = window.jspdf;
+
+const pdf = new jsPDF();
+
+pdf.text("Motor Service Report",20,20);
+
+let y = 40;
+
+services.forEach(s=>{
+
+const motor = motors.find(
+
+m=>m.id===s.motorId
+
+);
+
+pdf.text(
+
+`${motor ? motor.name : '-'} | ${s.type} | RM${s.cost}`,
+
+20,
+
+y
+
+);
+
+y += 10;
+
+});
+
+pdf.save("motor-report.pdf");
+
+}
+
+window.requestNotification = function(){
+
+if(Notification.permission !== "granted"){
+
+Notification.requestPermission();
+
+}
+
+}
+
+document.getElementById('receiptImage')
+
+.addEventListener('change',function(e){
+
+const file = e.target.files[0];
+
+if(file){
+
+const reader = new FileReader();
+
+reader.onload = function(event){
+
+document.getElementById('preview').src =
+
+event.target.result;
+
+document.getElementById('receiptStatus')
+
+.innerHTML = "Receipt uploaded successfully";
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+});
+
+loadData();
+
+</script>
 
 </body>
 
