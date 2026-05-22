@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MotorTracker Ultimate Firebase</title>
+<title>MotorTracker</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -161,6 +161,7 @@ button:hover {
     width:100%;
     margin-top:15px;
     border-radius:14px;
+    display: none;
 }
 .stats{
     display:grid;
@@ -191,6 +192,19 @@ button:hover {
 }
 .btn-delete:hover { background: #b91c1c; }
 
+.btn-view {
+    background: #059669;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    width: auto;
+    margin-top: 0;
+    display: inline-block;
+}
+.btn-view:hover { background: #10b981; }
+
 .btn-delete-motor {
     background: #374151;
     color: #f3f4f6;
@@ -200,7 +214,13 @@ button:hover {
 }
 .btn-delete-motor:hover { background: #7f1d1d; }
 
-/* Sembunyikan elemen sebelum login */
+.loading-text {
+    text-align: center;
+    color: #3b82f6;
+    font-weight: 500;
+    padding: 20px;
+}
+
 .hidden {
     display: none !important;
 }
@@ -225,7 +245,7 @@ button:hover {
         <button class="btn-logout" onclick="logoutUser()">Logout 🚪</button>
     </div>
     <div id="userGreeting" style="color: #3b82f6; margin-bottom: 15px; font-size: 14px;"></div>
-    <div class="subtitle">Cloud Sync + Excel + PDF + Fuel Tracker (Multi-User Secured)</div>
+    <div class="subtitle">Kami Menyediakan Service Tracker,Senang Untuk Tau Bila Motor Kita Patut Di Service :)</div>
 
     <div class="stats">
         <div class="stat">Total Motors <h2 id="totalMotors">0</h2></div>
@@ -237,14 +257,14 @@ button:hover {
     <div class="grid">
         <div class="card">
             <h2>Add Motor</h2>
-            <input type="text" id="motorName" placeholder="Motor Name">
+            <input type="text" id="motorName" placeholder="Motor Name (eg: LC135)">
             <input type="text" id="plateNumber" placeholder="Plate Number">
-            <input type="number" id="currentMileage" placeholder="Current Mileage">
+            <input type="number" id="currentMileage" placeholder="Current Mileage (KM)">
             <button onclick="addMotor()">Add Motor</button>
         </div>
 
         <div class="card">
-            <h2>Add Service</h2>
+            <h2>Add Service & Repair</h2>
             <select id="serviceMotor"></select>
             <select id="serviceType">
                 <option>Minyak Hitam</option>
@@ -261,20 +281,27 @@ button:hover {
                 <option>Top Set Service</option>
                 <option>Full Overhaul</option>
             </select>
-            <input type="number" id="serviceMileage" placeholder="Mileage">
+            <input type="number" id="serviceMileage" placeholder="Mileage Semasa Servis (KM)">
             <input type="date" id="serviceDate">
             <input type="number" id="serviceCost" placeholder="Cost RM">
-            <textarea id="serviceNotes" placeholder="Notes"></textarea>
+            <textarea id="serviceNotes" placeholder="Notes / Jenama Sparepart"></textarea>
+            
+            <!-- Diperbaharui: Resit disekalikan dalam form Servis -->
+            <label style="display:block; margin-top:12px; font-size:13px; color:#94a3b8;">Sertakan Gambar Resit (Opsional):</label>
+            <input type="file" id="receiptImage" accept="image/*" style="padding:8px;">
+            <p id="receiptStatus" style="font-size:12px; color:#10b981; margin-top:5px;"></p>
+
             <button onclick="addService()">Save Service</button>
         </div>
 
         <div class="card">
             <h2>Fuel Tracker</h2>
+            <select id="fuelMotor"></select> <!-- UPGRADE: Asingkan ikut motor -->
             <input type="date" id="fuelDate">
             <input type="number" id="fuelAmount" placeholder="Fuel Amount RM">
-            <input type="number" id="fuelMileage" placeholder="Mileage">
+            <input type="number" id="fuelMileage" placeholder="Odometer Mileage (KM)">
             <button onclick="saveFuel()">Save Fuel</button>
-            <div id="fuelStats" style="margin-top:15px;"></div>
+            <div id="fuelStats" style="margin-top:15px; font-size: 14px; color:#60a5fa;"></div>
         </div>
     </div>
 
@@ -287,7 +314,7 @@ button:hover {
 
     <div class="card" style="margin-top:20px;">
         <h2>Motor Dashboard</h2>
-        <div id="motorsContainer"></div>
+        <div id="motorsContainer"><div class="loading-text">Loading motors data...</div></div>
     </div>
 
     <div class="card" style="margin-top:20px;">
@@ -309,11 +336,13 @@ button:hover {
         </div>
     </div>
 
-    <div class="card" style="margin-top:20px;">
-        <h2>Receipt Upload</h2>
-        <input type="file" id="receiptImage" accept="image/*">
-        <img id="preview" class="preview">
-        <p id="receiptStatus" style="margin-top:15px;">No receipt uploaded</p>
+    <!-- Kotak Pop-up/Preview Resit Kekal -->
+    <div id="receiptModal" class="card hidden" style="margin-top:20px; border-color:#10b981;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h3>View Saved Receipt</h3>
+            <button onclick="closeReceipt()" style="width:auto; padding:5px 15px; margin:0; background:#374151;">Tutup</button>
+        </div>
+        <img id="preview" class="preview" style="display:block; max-height:400px; object-fit:contain;">
     </div>
 </div>
 
@@ -321,7 +350,6 @@ button:hover {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
 import { getDatabase, ref, push, set, get, update, remove } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
-// Tambah modul Firebase Authentication
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -342,6 +370,7 @@ const auth = getAuth(app);
 
 let currentUserId = null;
 let isLoginMode = true;
+let encodedReceiptBase64 = ""; // Menyimpan string gambar sementara
 
 let motors = [];
 let services = [];
@@ -354,7 +383,7 @@ const intervals = {
   "Minyak Fork Depan": 20000, "Top Set Service": 45000, "Full Overhaul": 90000
 };
 
-// 1. PEMERIKSAAN STATUS LOGIN USER (SENTIASA JAGA SECURITY)
+// PEMERIKSAAN STATUS LOGIN USER
 onAuthStateChanged(auth, (user) => {
     if (user) {
         currentUserId = user.uid;
@@ -369,7 +398,6 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Switch antara mod Login dan Daftar Akaun Baru
 window.toggleAuthMode = function() {
     isLoginMode = !isLoginMode;
     if(isLoginMode) {
@@ -383,7 +411,6 @@ window.toggleAuthMode = function() {
     }
 }
 
-// Mengendalikan proses Login / Pendaftaran
 window.handleAuth = async function() {
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
@@ -411,12 +438,11 @@ window.logoutUser = function() {
     }
 }
 
-// 2. LOAD DATA MENGIKUT USER ID MASING-MASING
+// LOAD DATA
 async function loadData(){
     if(!currentUserId) return;
     motors = []; services = []; fuels = [];
 
-    // Path diubah ke users/userId/... demi keselamatan data peranti
     const motorSnap = await get(ref(db, `users/${currentUserId}/motors`));
     if(motorSnap.exists()){
       motorSnap.forEach(docSnap=>{ motors.push({ id:docSnap.key, ...docSnap.val() }); });
@@ -437,11 +463,11 @@ async function loadData(){
 
 window.addMotor = async function(){
     if(!currentUserId) return;
-    const name = document.getElementById('motorName').value;
-    const plate = document.getElementById('plateNumber').value;
+    const name = document.getElementById('motorName').value.trim();
+    const plate = document.getElementById('plateNumber').value.trim();
     const mileage = Number(document.getElementById('currentMileage').value);
 
-    if(!name || !plate) { alert("Sila isi nama dan no plat motor!"); return; }
+    if(!name || !plate || !mileage) { alert("Sila isi semua ruangan maklumat motor!"); return; }
 
     const newRef = push(ref(db, `users/${currentUserId}/motors`));
     await set(newRef, { name, plate, mileage });
@@ -455,29 +481,69 @@ window.addMotor = async function(){
 window.addService = async function(){
     if(!currentUserId) return;
     const motorId = document.getElementById('serviceMotor').value;
-    if(!motorId) { alert("Sila tambah motor dulu bos!"); return; }
+    const sMileage = Number(document.getElementById('serviceMileage').value);
+    const sDate = document.getElementById('serviceDate').value;
+    const sCost = Number(document.getElementById('serviceCost').value);
+
+    if(!motorId) { alert("Sila tambah motor terlebih dahulu di borang sebelah!"); return; }
+    if(!sMileage || !sDate || !sCost) { alert("Sila isi Mileage, Tarikh & Kos Servis!"); return; }
+
+    // UPGRADE: Elak kemasukan mileage tak logik (mengundur)
+    const selectedMotor = motors.find(m => m.id === motorId);
+    if(selectedMotor && sMileage < selectedMotor.mileage) {
+        if(!confirm(`Mileage servis (${sMileage} KM) lebih rendah dari mileage motor sekarang (${selectedMotor.mileage} KM). Anda pasti?`)) {
+            return;
+        }
+    }
 
     const newRef = push(ref(db, `users/${currentUserId}/services`));
     await set(newRef, {
         motorId: motorId,
         type: document.getElementById('serviceType').value,
-        mileage: Number(document.getElementById('serviceMileage').value),
-        date: document.getElementById('serviceDate').value,
-        cost: Number(document.getElementById('serviceCost').value),
-        notes: document.getElementById('serviceNotes').value
+        mileage: sMileage,
+        date: sDate,
+        cost: sCost,
+        notes: document.getElementById('serviceNotes').value,
+        receipt: encodedReceiptBase64 // UPGRADE: Simpan terus teks gambar resit ke database
     });
+
+    // Reset Form & Resit Gambar
+    document.getElementById('serviceMileage').value = "";
+    document.getElementById('serviceDate').value = "";
+    document.getElementById('serviceCost').value = "";
+    document.getElementById('serviceNotes').value = "";
+    document.getElementById('receiptImage').value = "";
+    document.getElementById('receiptStatus').innerText = "";
+    encodedReceiptBase64 = ""; 
+
+    // Kemaskini automatik odometer motor ke mileage tertinggi servis baharu ini
+    if(selectedMotor && sMileage > selectedMotor.mileage) {
+        await update(ref(db, `users/${currentUserId}/motors/${motorId}`), { mileage: sMileage });
+    }
 
     loadData();
 }
 
 window.saveFuel = async function(){
     if(!currentUserId) return;
+    const motorId = document.getElementById('fuelMotor').value;
+    const fDate = document.getElementById('fuelDate').value;
+    const fAmount = Number(document.getElementById('fuelAmount').value);
+    const fMileage = Number(document.getElementById('fuelMileage').value);
+
+    if(!motorId) { alert("Sila pilih atau tambah motor dahulu!"); return; }
+    if(!fDate || !fAmount || !fMileage) { alert("Sila isi lengkap data minyak!"); return; }
+
     const newRef = push(ref(db, `users/${currentUserId}/fuels`));
     await set(newRef, {
-        date: document.getElementById('fuelDate').value,
-        amount: Number(document.getElementById('fuelAmount').value),
-        mileage: Number(document.getElementById('fuelMileage').value)
+        motorId: motorId,
+        date: fDate,
+        amount: fAmount,
+        mileage: fMileage
     });
+
+    document.getElementById('fuelAmount').value = "";
+    document.getElementById('fuelMileage').value = "";
     loadData();
 }
 
@@ -485,8 +551,9 @@ function render(){
     const container = document.getElementById('motorsContainer');
     const history = document.getElementById('historyTable');
     const serviceMotor = document.getElementById('serviceMotor');
+    const fuelMotor = document.getElementById('fuelMotor');
 
-    container.innerHTML = ""; history.innerHTML = ""; serviceMotor.innerHTML = "";
+    container.innerHTML = ""; history.innerHTML = ""; serviceMotor.innerHTML = ""; fuelMotor.innerHTML = "";
 
     document.getElementById('totalMotors').innerText = motors.length;
     document.getElementById('totalServices').innerText = services.length;
@@ -495,15 +562,21 @@ function render(){
     const total = services.reduce((sum,s)=>sum + (s.cost || 0),0);
     document.getElementById('totalCost').innerText = "RM" + total;
 
+    if(motors.length === 0) {
+        container.innerHTML = `<div style="color:#94a3b8; font-size:14px;">Belum ada motor. Sila daftarkan motor pertama anda di atas.</div>`;
+    }
+
     motors.forEach(motor=>{
         serviceMotor.innerHTML += `<option value="${motor.id}">${motor.name}</option>`;
+        fuelMotor.innerHTML += `<option value="${motor.id}">${motor.name}</option>`;
+        
         const motorServices = services.filter(s=>s.motorId===motor.id);
 
         let html = `
         <div class="motor">
         <h3>${motor.name}</h3>
-        <p style="color:#94a3b8;">${motor.plate}</p>
-        <p><b>Mileage:</b> ${motor.mileage} KM</p>
+        <p style="color:#94a3b8; font-size:13px;">Plat No: ${motor.plate}</p>
+        <p style="margin-top:5px;"><b>Odometer Semasa:</b> ${motor.mileage} KM</p>
         `;
 
         Object.keys(intervals).forEach(type=>{
@@ -512,17 +585,17 @@ function render(){
                 const next = latest.mileage + intervals[type];
                 const left = next - motor.mileage;
                 let cls = "good"; let label = "GOOD";
-                if(left <= 0){ cls = "danger"; label = "OVERDUE"; }
+                if(left <= 0){ cls = "danger"; label = "OVERDUE / WAJIB TUKAR"; }
                 else if(left <= 500){ cls = "warn"; label = "DUE SOON"; }
 
                 const progress = Math.min(100, Math.max(0, ((motor.mileage-latest.mileage)/intervals[type])*100));
 
                 html += `
                 <div class="status ${cls}">
-                <b>${type}</b><br>
+                <b>⚙️ ${type}</b><br>
                 Status: ${label}<br>
                 Next Service: ${next} KM<br>
-                Remaining: ${left} KM
+                Baki Jarak: ${left} KM
                 <div class="progress"><div style="width:${progress}%"></div></div>
                 </div>
                 `;
@@ -530,7 +603,7 @@ function render(){
         });
 
         html += `
-        <input type="number" placeholder="Update Mileage" id="update-${motor.id}">
+        <input type="number" placeholder="Update Odometer Baru" id="update-${motor.id}" style="margin-top:15px;">
         <button onclick="updateMileage('${motor.id}')">Update Mileage</button>
         <button class="btn-delete-motor" onclick="deleteMotor('${motor.id}', '${motor.name}')">🗑️ Delete Motor</button>
         </div>
@@ -540,14 +613,20 @@ function render(){
 
     services.slice().reverse().forEach(s=>{
         const motor = motors.find(m=>m.id===s.motorId);
+        // Semak jika ada string resit tersimpan
+        const receiptBtn = s.receipt ? `<button class="btn-view" onclick="viewReceipt('${s.id}')">🖼️ Resit</button>` : '';
+
         history.innerHTML += `
         <tr>
-        <td>${motor ? motor.name : '-'}</td>
+        <td><b>${motor ? motor.name : '-'}</b></td>
         <td>${s.type}</td>
         <td>${s.mileage} KM</td>
         <td>RM ${s.cost}</td>
         <td>${s.date}</td>
-        <td><button class="btn-delete" onclick="deleteService('${s.id}')">🗑️ Padam</button></td>
+        <td>
+            ${receiptBtn}
+            <button class="btn-delete" onclick="deleteService('${s.id}')">🗑️</button>
+        </td>
         </tr>
         `;
     });
@@ -559,13 +638,20 @@ window.updateMileage = async function(id){
     if(!currentUserId) return;
     const value = Number(document.getElementById('update-'+id).value);
     if(!value) return;
+
+    const targetMotor = motors.find(m => m.id === id);
+    if(targetMotor && value < targetMotor.mileage) {
+        alert("Ralat: Mileage baharu tidak boleh lebih kecil daripada mileage sedia ada!");
+        return;
+    }
+
     await update(ref(db, `users/${currentUserId}/motors/${id}`), { mileage: value });
     loadData();
 }
 
 window.deleteService = async function(id) {
   if(!currentUserId) return;
-  if(confirm("Betul ke kau nak padam rekod servis ini?")) {
+  if(confirm("Betul ke kau nak padam rekod servis ini? Gambar resit juga akan dipadam.")) {
     await remove(ref(db, `users/${currentUserId}/services/${id}`));
     loadData();
   }
@@ -586,12 +672,65 @@ window.deleteMotor = async function(id, name) {
 
 function renderFuel(){
     const stats = document.getElementById('fuelStats');
-    if(fuels.length < 2){ stats.innerHTML = "Sila isi sekurang-kurangnya 2 rekod minyak."; return; }
-    const latest = fuels[fuels.length-1];
-    const previous = fuels[fuels.length-2];
+    const selectedFuelMotorId = document.getElementById('fuelMotor').value;
+    
+    if(!selectedFuelMotorId) {
+        stats.innerHTML = "Sila tambah motor untuk analisis minyak.";
+        return;
+    }
+
+    // UPGRADE: Tapis rekod minyak mengikut motor aktif sahaja
+    const motorFuels = fuels.filter(f => f.motorId === selectedFuelMotorId).sort((a,b)=> new Date(a.date) - new Date(b.date));
+
+    if(motorFuels.length < 2){ 
+        stats.innerHTML = "💡 Perlu sekurang-kurangnya 2 rekod minyak untuk motor ini bagi menjana analisis RM/KM."; 
+        return; 
+    }
+
+    const latest = motorFuels[motorFuels.length-1];
+    const previous = motorFuels[motorFuels.length-2];
     const distance = latest.mileage - previous.mileage;
+    
+    if(distance <= 0) {
+        stats.innerHTML = "⚠️ Ralat: Sila pastikan input mileage minyak terbaharu lebih tinggi.";
+        return;
+    }
+
     const costPerKm = (latest.amount / distance).toFixed(2);
-    stats.innerHTML = `Jarak: ${distance} KM <br> Kos Minyak: RM ${costPerKm}/KM`;
+    stats.innerHTML = `🏁 <b>Prestasi Terakhir Motor Ini:</b><br>Jarak Perjalanan: ${distance} KM <br> Anggaran Kos: <b>RM ${costPerKm}/KM</b>`;
+}
+
+// Tukar Gambar kepada Teks Base64 sebelum simpan ke Realtime Database
+document.getElementById('receiptImage').addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(file){
+        // Hadkan saiz gambar bawah 1MB supaya database tidak berat
+        if(file.size > 1024 * 1024) {
+            alert("Gambar terlalu besar! Sila guna gambar resit bawah 1MB (Boleh screenshot resit untuk kecilkan saiz).");
+            this.value = "";
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(event){
+            encodedReceiptBase64 = event.target.result;
+            document.getElementById('receiptStatus').innerText = "✓ Gambar resit sedia disimpan";
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Papar Semula Resit Tersimpan
+window.viewReceipt = function(serviceId) {
+    const sRecord = services.find(s => s.id === serviceId);
+    if(sRecord && sRecord.receipt) {
+        document.getElementById('preview').src = sRecord.receipt;
+        document.getElementById('receiptModal').classList.remove('hidden');
+        document.getElementById('receiptModal').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+window.closeReceipt = function() {
+    document.getElementById('receiptModal').classList.add('hidden');
 }
 
 window.exportExcel = function(){
@@ -622,17 +761,9 @@ window.requestNotification = function(){
     if(Notification.permission !== "granted"){ Notification.requestPermission(); }
 }
 
-document.getElementById('receiptImage').addEventListener('change',function(e){
-    const file = e.target.files[0];
-    if(file){
-        const reader = new FileReader();
-        reader.onload = function(event){
-            document.getElementById('preview').src = event.target.result;
-            document.getElementById('receiptStatus').innerHTML = "Receipt uploaded successfully";
-        };
-        reader.readAsDataURL(file);
-    }
-});
+// Pasang Listener khas untuk kesan pertukaran dropdown analisis minyak
+document.getElementById('fuelMotor').addEventListener('change', renderFuel);
+
 </script>
 </body>
 </html>
